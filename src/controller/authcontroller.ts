@@ -2,7 +2,6 @@ import validator from "validator";
 import { compareSync, genSaltSync, hashSync } from "bcrypt-ts";
 import jwt from "jsonwebtoken";
 import catchAsync from "../helpers/catchAsync.js";
-import mongoose from "mongoose";
 import { Response, Request } from "express";
 import envHandler from "../helpers/envHandler.js";
 import User from "../models/userModel.js";
@@ -50,15 +49,12 @@ export const Registercontroller = catchAsync(
     thursday.setHours(10, 0, 0, 0);
     const friday = new Date(thursday);
     friday.setDate(thursday.getDate() + 1);
-    console.log(friday, thursday);
-    for (let i = 0; i < 2; i++) {
+    for (let i = 0; i < 52; i++) {
         newUser.slots.push({ datetime: new Date(thursday) });
         newUser.slots.push({ datetime: new Date(friday) });
         thursday.setDate(thursday.getDate() + 7);
         friday.setDate(friday.getDate() + 7);
-        
     }
-    console.log(newUser.slots);
     await newUser.save();
     const token = jwt.sign({ userID: newUser._id }, envHandler("JWT_SECRET"), {
       expiresIn: "30d",
